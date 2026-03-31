@@ -123,23 +123,20 @@ Execution paths converge on shared **state** (`state/`, `bootstrap/`), **permiss
 
 Full internals documentation (architecture, workflows, official-docs cross-reference, subsystem reference, appendices) is built with **MkDocs Material** from [`docs-site/`](docs-site/).
 
-- **Live site:** after you enable GitHub Pages on the `gh-pages` branch, the site is served at  
-  `https://<your-github-user>.github.io/claude-code-source-code/`  
-  (replace with your fork’s user/org and repo name).
+- **Live site:** [https://mehmoodosman.github.io/claude-code-source-code/](https://mehmoodosman.github.io/claude-code-source-code/)
 - **Local preview:** `cd docs-site && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && mkdocs serve`
 - **Publish:** pushing to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml) and deploys to `gh-pages`.
 
-Update `site_url` and `repo_url` in [`docs-site/mkdocs.yml`](docs-site/mkdocs.yml) after the first deploy so canonical URLs match your fork.
+Canonical `site_url` and `repo_url` are set in [`docs-site/mkdocs.yml`](docs-site/mkdocs.yml) for this deployment. Forks should change those values to match their own GitHub user/org and Pages URL.
 
 **Contributing to docs:** edit Markdown under `docs-site/docs/`; keep the [official docs map](docs-site/docs/official-docs-map.md) in sync with [Anthropic’s docs index](https://code.claude.com/docs/llms.txt) when adding major features.
 
-### Next steps (first-time publish)
+### Next steps (forks / new clones)
 
-1. **Commit and push** this repository to GitHub (`main` must contain `docs-site/` and `.github/workflows/pages.yml`).
-2. **Allow the workflow to run** — GitHub Actions → _Deploy documentation to GitHub Pages_ → confirm it completes (or run **Run workflow** manually).
-3. **Turn on Pages** — Repository **Settings → Pages** → **Build and deployment** → Source: **Deploy from a branch** → Branch **`gh-pages`** / folder **`/ (root)`**. (If you prefer the newer “GitHub Actions” source, switch the workflow to `actions/upload-pages-artifact` + `deploy-pages` instead of peaceiris.)
-4. **Set `site_url`** in [`docs-site/mkdocs.yml`](docs-site/mkdocs.yml) to your live URL (e.g. `https://YOUR_USER.github.io/claude-code-source-code/`) and push again so sitemaps and search use the correct base.
-5. **Fork-specific URLs** — Update `repo_url`, `edit_uri`, and the `extra.social` GitHub link in `mkdocs.yml` if this is not `marium/claude-code-source-code`.
+1. **Commit and push** so `main` includes `docs-site/` and `.github/workflows/pages.yml`.
+2. **Run the Pages workflow** (or wait for it on push).
+3. **Settings → Pages** → deploy from branch **`gh-pages`** / **`/ (root)`** (unless you switch to the GitHub Actions Pages source).
+4. Set **`site_url`** in `mkdocs.yml` to your live URL and align **`repo_url`** / **`extra.social`** with your fork, then push to refresh the site.
 
 ## Repository layout
 

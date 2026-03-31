@@ -27,4 +27,4 @@ The recovered codebase implements primarily the **terminal CLI** surface, plus s
 
 ## Repository
 
-Source code lives under `src/` in the GitHub repository. The published MkDocs site is built from `docs-site/` via GitHub Actions. After enabling Pages on the `gh-pages` branch, the URL is typically `https://<user>.github.io/<repo>/` (see the root `README.md`).
+Source code lives under `src/` on GitHub ([mehmoodosman/claude-code-source-code](https://github.com/mehmoodosman/claude-code-source-code)). This site is published at **[https://mehmoodosman.github.io/claude-code-source-code/](https://mehmoodosman.github.io/claude-code-source-code/)** via GitHub Actions from `docs-site/`.

@@ -27,7 +27,7 @@ Open `http://127.0.0.1:8000` to preview.
 On push to `main`, the workflow `.github/workflows/pages.yml` builds the site and pushes to the `gh-pages` branch (also runs when `README.md` or the workflow file changes).
 
 1. In the GitHub repo: **Settings → Pages → Build and deployment → Branch `gh-pages` / `/ (root)`**.
-2. After the first deploy, set `site_url` in `docs-site/mkdocs.yml` to your real Pages URL (e.g. `https://<user>.github.io/<repo>/`) so canonical links and search work correctly. Also update `repo_url` if your fork uses a different owner or name.
+2. Set `site_url` in `mkdocs.yml` to your real Pages URL (this fork uses `https://mehmoodosman.github.io/claude-code-source-code/`) and keep `repo_url` aligned with your GitHub owner so “edit” links and sitemaps stay correct.
 
 The deploy step sets **`enable_jekyll: false`** so GitHub Pages serves static files correctly (adds `.nojekyll`).
 
