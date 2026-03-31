@@ -119,8 +119,32 @@ src/
 
 Execution paths converge on shared **state** (`state/`, `bootstrap/`), **permissions** (`utils/permissions/`), and **session storage** (`utils/sessionStorage.js`, hooks in `utils/sessionStart.js`). Non-interactive and SDK-style use share much of the same stack as the full-screen REPL, with different front-ends for I/O.
 
+## Documentation (GitHub Pages)
+
+Full internals documentation (architecture, workflows, official-docs cross-reference, subsystem reference, appendices) is built with **MkDocs Material** from [`docs-site/`](docs-site/).
+
+- **Live site:** after you enable GitHub Pages on the `gh-pages` branch, the site is served at  
+  `https://<your-github-user>.github.io/claude-code-source-code/`  
+  (replace with your fork’s user/org and repo name).
+- **Local preview:** `cd docs-site && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && mkdocs serve`
+- **Publish:** pushing to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml) and deploys to `gh-pages`.
+
+Update `site_url` and `repo_url` in [`docs-site/mkdocs.yml`](docs-site/mkdocs.yml) after the first deploy so canonical URLs match your fork.
+
+**Contributing to docs:** edit Markdown under `docs-site/docs/`; keep the [official docs map](docs-site/docs/official-docs-map.md) in sync with [Anthropic’s docs index](https://code.claude.com/docs/llms.txt) when adding major features.
+
+### Next steps (first-time publish)
+
+1. **Commit and push** this repository to GitHub (`main` must contain `docs-site/` and `.github/workflows/pages.yml`).
+2. **Allow the workflow to run** — GitHub Actions → _Deploy documentation to GitHub Pages_ → confirm it completes (or run **Run workflow** manually).
+3. **Turn on Pages** — Repository **Settings → Pages** → **Build and deployment** → Source: **Deploy from a branch** → Branch **`gh-pages`** / folder **`/ (root)`**. (If you prefer the newer “GitHub Actions” source, switch the workflow to `actions/upload-pages-artifact` + `deploy-pages` instead of peaceiris.)
+4. **Set `site_url`** in [`docs-site/mkdocs.yml`](docs-site/mkdocs.yml) to your live URL (e.g. `https://YOUR_USER.github.io/claude-code-source-code/`) and push again so sitemaps and search use the correct base.
+5. **Fork-specific URLs** — Update `repo_url`, `edit_uri`, and the `extra.social` GitHub link in `mkdocs.yml` if this is not `marium/claude-code-source-code`.
+
 ## Repository layout
 
 - **`src/`** — Application source (thousands of modules) as recovered from the bundle map.
-- **`docs/`** — Human-readable layout reference ([directory-structure.md](docs/directory-structure.md)).
+- **`docs-site/`** — MkDocs source for the GitHub Pages documentation site.
+- **`docs/`** — Short pointer plus [`directory-structure.md`](docs/directory-structure.md) (`src/` layout reference).
+- **`scripts/`** — Optional helpers (e.g. `gen-appendices.sh`).
 - There is **no `package.json` in this clone**; building would require the original toolchain (Bun, internal `bun:bundle` features, and private deps). Treat this tree as a **read-only architectural reference**.
