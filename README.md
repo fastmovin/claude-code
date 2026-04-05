@@ -138,6 +138,15 @@ Canonical `site_url` and `repo_url` are set in [`docs-site/mkdocs.yml`](docs-sit
 3. **Settings → Pages** → deploy from branch **`gh-pages`** / **`/ (root)`** (unless you switch to the GitHub Actions Pages source).
 4. Set **`site_url`** in `mkdocs.yml` to your live URL and align **`repo_url`** / **`extra.social`** with your fork, then push to refresh the site.
 
+## Interactive HTML guides
+
+Two self-contained HTML guides with interactive Mermaid + SVG diagrams (zoom/pan/resize):
+
+- **[`claude-code-guide.html`](claude-code-guide.html)** — Full architecture overview: 12 sections covering tech stack, layered architecture, startup flow, agent query loop, directory map, tool registry, services, terminal UI component tree, feature flags, slash commands, and key design patterns.
+- **[`claude-code-security-guide.html`](claude-code-security-guide.html)** — Security deep-dive: 12 sections covering defense-in-depth layers, permission modes, the full permission decision flow, auto mode AI classifier, bash tool validation (12k lines), file operation safety, agent restrictions, unbypassable hard blocks, trust model, enterprise controls (MDM/policy/remote settings), MCP server security, and credential storage.
+
+Open either file in a browser — no build step needed.
+
 ## Repository layout
 
 - **`src/`** — Application source (thousands of modules) as recovered from the bundle map.

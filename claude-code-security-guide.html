@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code — Security Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #141820;
+  --bg-elevated: #1a1f2a;
+  --bg-card: #1f2533;
+  --bg-card-hover: #272e3e;
+  --border: #313a4e;
+  --border-bright: #4a5470;
+  --text: #dce1ea;
+  --text-dim: #8e96a8;
+  --text-bright: #f0f3f8;
+  --accent: #e0b468;
+  --accent-dim: #c49440;
+  --accent-glow: rgba(224,180,104,0.14);
+  --blue: #5b8def;
+  --blue-dim: rgba(91,141,239,0.15);
+  --green: #4ade80;
+  --green-dim: rgba(74,222,128,0.12);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.12);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.12);
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.12);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.12);
+  --pink: #f472b6;
+  --pink-dim: rgba(244,114,182,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border-bright) var(--bg); }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.65; font-size: 15px; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--accent); color: var(--bg); }
+
+/* Nav */
+nav { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--bg-elevated); border-right: 1px solid var(--border); padding: 28px 0; z-index: 100; overflow-y: auto; }
+.nav-logo { padding: 0 24px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.nav-logo h1 { font-family: var(--serif); font-size: 22px; color: var(--text-bright); font-weight: 400; }
+.nav-logo span { font-family: var(--mono); font-size: 11px; color: var(--red); display: block; margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+.nav-section { padding: 0 16px; margin-bottom: 8px; }
+.nav-section-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; padding: 12px 8px 6px; }
+.nav-link { display: block; padding: 7px 12px; font-size: 13px; color: var(--text-dim); text-decoration: none; border-radius: 6px; transition: all 0.15s; cursor: pointer; }
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-link.active { color: var(--red); background: var(--red-dim); }
+
+/* Main */
+main { margin-left: 240px; max-width: 1100px; padding: 48px 56px 120px; }
+section { margin-bottom: 72px; animation: fadeUp 0.5s ease-out both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+h2 { font-family: var(--serif); font-size: 32px; color: var(--text-bright); font-weight: 400; margin-bottom: 8px; letter-spacing: -0.02em; }
+h2 .num { font-family: var(--mono); font-size: 13px; color: var(--red); margin-right: 10px; vertical-align: middle; }
+h3 { font-family: var(--sans); font-size: 18px; font-weight: 600; color: var(--text-bright); margin: 32px 0 12px; }
+p { margin-bottom: 14px; max-width: 700px; }
+.lead { font-size: 17px; color: var(--text); margin-bottom: 28px; max-width: 660px; line-height: 1.7; }
+.divider { height: 1px; background: linear-gradient(90deg, var(--border), transparent 80%); margin: 12px 0 28px; }
+code { font-family: var(--mono); font-size: 12px; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 3px; color: var(--accent); }
+
+/* Hero */
+.hero { padding: 20px 0 48px; }
+.hero h1 { font-family: var(--serif); font-size: 52px; color: var(--text-bright); font-weight: 400; line-height: 1.15; letter-spacing: -0.03em; margin-bottom: 16px; }
+.hero h1 em { color: var(--red); font-style: italic; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin: 20px 0; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: all 0.2s; }
+.card:hover { background: var(--bg-card-hover); border-color: var(--border-bright); transform: translateY(-1px); }
+.card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 12px; font-family: var(--mono); font-weight: 600; }
+.card h4 { font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 6px; }
+.card p { font-size: 13px; color: var(--text-dim); line-height: 1.55; margin-bottom: 0; }
+.card .path { font-family: var(--mono); font-size: 11px; color: var(--accent-dim); margin-top: 10px; display: block; }
+.card-blue .card-icon { background: var(--blue-dim); color: var(--blue); }
+.card-green .card-icon { background: var(--green-dim); color: var(--green); }
+.card-purple .card-icon { background: var(--purple-dim); color: var(--purple); }
+.card-orange .card-icon { background: var(--orange-dim); color: var(--orange); }
+.card-cyan .card-icon { background: var(--cyan-dim); color: var(--cyan); }
+.card-red .card-icon { background: var(--red-dim); color: var(--red); }
+.card-pink .card-icon { background: var(--pink-dim); color: var(--pink); }
+.card-accent .card-icon { background: var(--accent-glow); color: var(--accent); }
+
+/* Mermaid */
+.mermaid-wrap { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); position: relative; overflow: hidden; cursor: grab; resize: both; min-height: 300px; }
+.mermaid-wrap:active { cursor: grabbing; }
+.mermaid-wrap .zoom-hint { position: absolute; top: 8px; right: 12px; z-index: 10; font-family: var(--mono); font-size: 10px; color: var(--text-dim); opacity: 0.5; pointer-events: none; }
+.mermaid-inner { transform-origin: 0 0; will-change: transform; }
+.mermaid-inner svg { display: block; }
+.mermaid-inner .node rect, .mermaid-inner .node polygon, .mermaid-inner .node circle { stroke-width: 1.5px !important; rx: 8px !important; ry: 8px !important; }
+.mermaid-inner .edgeLabel { font-size: 11px !important; background-color: var(--bg-elevated) !important; color: var(--text) !important; padding: 2px 6px !important; }
+.mermaid-inner .edgePath .path { stroke-width: 1.5px !important; }
+.mermaid-inner .cluster rect { rx: 10px !important; ry: 10px !important; stroke-width: 1.5px !important; }
+.mermaid-inner .nodeLabel { font-size: 12px !important; line-height: 1.4 !important; }
+.mermaid-wrap.size-lg { height: 700px; }
+.mermaid-wrap.size-md { height: 520px; }
+.mermaid-wrap.size-sm { height: 400px; }
+
+/* Flow steps */
+.flow-step { display: flex; align-items: flex-start; gap: 16px; margin: 16px 0; }
+.flow-num { width: 28px; height: 28px; border-radius: 50%; background: var(--red-dim); border: 1px solid rgba(248,113,113,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--red); flex-shrink: 0; margin-top: 2px; }
+.flow-body h5 { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.flow-body p { font-size: 13px; color: var(--text-dim); margin-bottom: 0; }
+.flow-connector { width: 1px; height: 12px; background: var(--border); margin-left: 14px; }
+
+/* Tables */
+.info-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+.info-table th { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 500; }
+.info-table td { padding: 10px 14px; border-bottom: 1px solid rgba(49,58,78,0.5); vertical-align: top; }
+.info-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Badges */
+.badge { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin: 2px 4px 2px 0; font-weight: 500; }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+.badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+.badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,141,239,0.2); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+
+/* Expandable */
+.expandable { border: 1px solid var(--border); border-radius: var(--radius); margin: 10px 0; overflow: hidden; }
+.expandable-header { padding: 14px 18px; background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.15s; user-select: none; }
+.expandable-header:hover { background: var(--bg-card-hover); }
+.expandable-header h4 { font-size: 14px; font-weight: 500; color: var(--text-bright); }
+.expandable-arrow { font-size: 12px; color: var(--text-dim); transition: transform 0.2s; }
+.expandable.open .expandable-arrow { transform: rotate(90deg); }
+.expandable-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.expandable.open .expandable-body { max-height: 4000px; }
+.expandable-content { padding: 18px; border-top: 1px solid var(--border); font-size: 13px; line-height: 1.65; }
+
+/* Callout boxes */
+.callout { background: var(--bg-card); border-left: 3px solid var(--red); border-radius: 0 var(--radius) var(--radius) 0; padding: 16px 20px; margin: 16px 0; font-size: 13px; line-height: 1.6; }
+.callout strong { color: var(--text-bright); }
+.callout.warn { border-left-color: var(--orange); }
+.callout.info { border-left-color: var(--blue); }
+.callout.safe { border-left-color: var(--green); }
+
+/* Responsive */
+@media (max-width: 900px) { nav { display: none; } main { margin-left: 0; padding: 32px 24px 80px; } .hero h1 { font-size: 36px; } .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <h1>Claude Code</h1>
+    <span>Security Architecture</span>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-link active" href="#overview">Philosophy</a>
+    <a class="nav-link" href="#layers">Defense Layers</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Permission System</div>
+    <a class="nav-link" href="#modes">Permission Modes</a>
+    <a class="nav-link" href="#decision-flow">Decision Flow</a>
+    <a class="nav-link" href="#auto-mode">Auto Mode Classifier</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Tool Safety</div>
+    <a class="nav-link" href="#bash-safety">Bash Sandboxing</a>
+    <a class="nav-link" href="#file-safety">File Operations</a>
+    <a class="nav-link" href="#agent-restrictions">Agent Restrictions</a>
+    <a class="nav-link" href="#hard-blocks">Hard Blocks</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Enterprise &amp; Trust</div>
+    <a class="nav-link" href="#trust">Trust Model</a>
+    <a class="nav-link" href="#enterprise">Enterprise Controls</a>
+    <a class="nav-link" href="#mcp-security">MCP Security</a>
+    <a class="nav-link" href="#credentials">Credential Storage</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="overview">
+  <h1>Security of <em>Claude Code</em></h1>
+  <p class="lead">
+    How Anthropic's CLI agent limits, approves, and gates every action it takes — from a single shell command to multi-agent swarm coordination. This guide maps every security layer and how they interlock.
+  </p>
+  <div class="callout info">
+    <strong>Core principle: defense-in-depth.</strong> No single layer is the security boundary. Permission modes, tool-specific validators, path checks, sandbox enforcement, enterprise policies, and AI classifiers all stack. A bypass in one layer is caught by the next.
+  </div>
+</section>
+
+<!-- ══════════════════ DEFENSE LAYERS ══════════════════ -->
+<section id="layers">
+  <h2><span class="num">01</span>Defense-in-Depth Layers</h2>
+  <div class="divider"></div>
+  <p class="lead">Seven concentric layers protect the user's system. Every tool invocation must pass through all of them — outermost first.</p>
+
+  <div class="mermaid-wrap size-lg" id="mwrap-layers">
+    <div class="zoom-hint">Scroll to zoom · Drag to pan · Double-click to reset · Resize from corner</div>
+    <div class="mermaid-inner">
+      <pre class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1f2533', 'primaryTextColor': '#dce1ea', 'primaryBorderColor': '#4a5470', 'lineColor': '#4a5470', 'secondaryColor': '#1a1f2a', 'tertiaryColor': '#141820', 'background': '#141820', 'mainBkg': '#1f2533', 'nodeBorder': '#4a5470', 'clusterBkg': '#161c26', 'clusterBorder': '#4a5470', 'titleColor': '#dce1ea', 'edgeLabelBackground': '#1a1f2a', 'fontSize': '13px'}, 'flowchart': {'useMaxWidth': false, 'htmlLabels': true, 'curve': 'basis', 'nodeSpacing': 25, 'rankSpacing': 35}}}%%
+flowchart TD
+    TOOL_USE["<b style='color:#f0f3f8'>Model requests tool_use</b>"]
+
+    subgraph L1["<span style='color:#f87171;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 1 — ENTERPRISE POLICY</span>"]
+        POL["<b style='color:#f0f3f8'>Policy Limits</b><br/><span style='color:#8e96a8;font-size:11px'>Org-level tool restrictions via API</span>"]
+        MDM["<b style='color:#f0f3f8'>MDM Settings</b><br/><span style='color:#8e96a8;font-size:11px'>macOS plist / Windows registry</span>"]
+        REMOTE["<b style='color:#f0f3f8'>Remote Managed Settings</b><br/><span style='color:#8e96a8;font-size:11px'>Server-pushed config overrides</span>"]
+    end
+
+    subgraph L2["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 2 — PERMISSION RULES</span>"]
+        direction LR
+        DENY["<b style='color:#f87171'>Deny rules</b><br/><span style='color:#8e96a8;font-size:11px'>Explicit blocks (highest priority)</span>"]
+        ASK["<b style='color:#e0b468'>Ask rules</b><br/><span style='color:#8e96a8;font-size:11px'>Require user/classifier approval</span>"]
+        ALLOW["<b style='color:#4ade80'>Allow rules</b><br/><span style='color:#8e96a8;font-size:11px'>Pre-approved tool patterns</span>"]
+    end
+
+    subgraph L3["<span style='color:#e0b468;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 3 — PERMISSION MODE</span>"]
+        MODE["<b style='color:#f0f3f8'>Mode gate</b><br/><span style='color:#8e96a8;font-size:11px'>default / acceptEdits / plan / auto / bypassPermissions</span>"]
+    end
+
+    subgraph L4["<span style='color:#a78bfa;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 4 — TOOL-SPECIFIC VALIDATION</span>"]
+        direction LR
+        BASH_V["<b style='color:#f0f3f8'>Bash: 12k lines</b><br/><span style='color:#8e96a8;font-size:11px'>Command parsing, injection<br/>detection, path validation</span>"]
+        FILE_V["<b style='color:#f0f3f8'>File: staleness</b><br/><span style='color:#8e96a8;font-size:11px'>Read-before-write, UNC<br/>blocking, encoding checks</span>"]
+        AGENT_V["<b style='color:#f0f3f8'>Agent: tool filter</b><br/><span style='color:#8e96a8;font-size:11px'>Hardcoded disallowed<br/>tool lists per agent type</span>"]
+    end
+
+    subgraph L5["<span style='color:#22d3ee;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 5 — SANDBOX ENFORCEMENT</span>"]
+        SANDBOX["<b style='color:#f0f3f8'>Runtime sandbox</b><br/><span style='color:#8e96a8;font-size:11px'>Filesystem read/write restrictions · Network host allowlists · Managed domain-only mode</span>"]
+    end
+
+    subgraph L6["<span style='color:#4ade80;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 6 — HARD BLOCKS (UNBYPASSABLE)</span>"]
+        direction LR
+        PATHS["<b style='color:#f87171'>Protected paths</b><br/><span style='color:#8e96a8;font-size:11px'>/, ~, /usr, C:\\Windows</span>"]
+        SECRETS["<b style='color:#f87171'>Secret guards</b><br/><span style='color:#8e96a8;font-size:11px'>Team memory, UNC/NTLM</span>"]
+        SHELL["<b style='color:#f87171'>Shell expansion</b><br/><span style='color:#8e96a8;font-size:11px'>$VAR, $(cmd) blocked</span>"]
+    end
+
+    subgraph L7["<span style='color:#5b8def;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 7 — USER APPROVAL UI</span>"]
+        DIALOG["<b style='color:#f0f3f8'>Permission dialog</b><br/><span style='color:#8e96a8;font-size:11px'>Tool-specific preview with approve / deny / always-allow options</span>"]
+    end
+
+    EXECUTE(["<b style='color:#4ade80'>Execute tool</b>"])
+
+    TOOL_USE --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> L6
+    L6 --> L7
+    L7 --> EXECUTE
+
+    classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
+    class POL,MDM,REMOTE,DENY,ASK,ALLOW,MODE,BASH_V,FILE_V,AGENT_V,SANDBOX,PATHS,SECRETS,SHELL,DIALOG nodeDefault
+
+    style L1 fill:#161c26,stroke:#f87171,stroke-width:1.5px
+    style L2 fill:#161c26,stroke:#fb923c,stroke-width:1.5px
+    style L3 fill:#161c26,stroke:#e0b468,stroke-width:1.5px
+    style L4 fill:#161c26,stroke:#a78bfa,stroke-width:1.5px
+    style L5 fill:#161c26,stroke:#22d3ee,stroke-width:1.5px
+    style L6 fill:#161c26,stroke:#4ade80,stroke-width:1.5px
+    style L7 fill:#161c26,stroke:#5b8def,stroke-width:1.5px
+    style TOOL_USE fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
+    style EXECUTE fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+
+    linkStyle 0,1,2,3,4,5,6,7 stroke:#4a5470,stroke-width:1.5px
+      </pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PERMISSION MODES ══════════════════ -->
+<section id="modes">
+  <h2><span class="num">02</span>Permission Modes</h2>
+  <div class="divider"></div>
+  <p class="lead">The mode determines how <code>ask</code> decisions are resolved. Users can cycle modes with Shift+Tab or set one via CLI/settings.</p>
+
+  <table class="info-table">
+    <thead><tr><th>Mode</th><th>Behavior for "ask" decisions</th><th>Risk</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>default</code></td>
+        <td>Shows permission dialog for every action that isn't pre-allowed by rules. User must approve or deny each one.</td>
+        <td><span class="badge badge-green">Safest</span></td>
+      </tr>
+      <tr>
+        <td><code>acceptEdits</code></td>
+        <td>Auto-allows file reads, writes, and edits within the current working directory. Still prompts for shell commands, network access, and operations outside CWD.</td>
+        <td><span class="badge badge-blue">Low</span></td>
+      </tr>
+      <tr>
+        <td><code>plan</code></td>
+        <td>Pauses before execution to show a detailed plan. When combined with auto mode, the AI classifier evaluates each step.</td>
+        <td><span class="badge badge-blue">Low</span></td>
+      </tr>
+      <tr>
+        <td><code>auto</code></td>
+        <td>AI classifier evaluates each action against the conversation transcript. Safe tools auto-approved via allowlist fast path. Dangerous patterns are blocked. Falls back to interactive prompts after 3 consecutive or 20 total denials.</td>
+        <td><span class="badge badge-orange">Medium</span></td>
+      </tr>
+      <tr>
+        <td><code>dontAsk</code></td>
+        <td>Converts every <code>ask</code> to <code>deny</code>. The model can only use pre-allowed tools. For automated/CI pipelines where no human is present.</td>
+        <td><span class="badge badge-purple">Restrictive</span></td>
+      </tr>
+      <tr>
+        <td><code>bypassPermissions</code></td>
+        <td>Skips all permission checks. Equivalent to answering "yes" to everything. Can be remotely disabled via Statsig gate <code>tengu_disable_bypass_permissions_mode</code>.</td>
+        <td><span class="badge badge-red">Dangerous</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>Auto mode strips dangerous permissions.</strong> When entering auto mode, permission rules that would bypass the classifier (like <code>Bash(*)</code> or <code>Bash(python:*)</code>) are temporarily removed and stashed. They're restored when leaving auto mode.
+  </div>
+</section>
+
+<!-- ══════════════════ DECISION FLOW ══════════════════ -->
+<section id="decision-flow">
+  <h2><span class="num">03</span>Permission Decision Flow</h2>
+  <div class="divider"></div>
+  <p class="lead">Every tool invocation runs through <code>hasPermissionsToUseTool()</code> — a 1,500+ line decision engine in <code>permissions.ts</code>. Here's the full flow.</p>
+
+  <div class="mermaid-wrap size-lg" id="mwrap-decision">
+    <div class="zoom-hint">Scroll to zoom · Drag to pan · Double-click to reset · Resize from corner</div>
+    <div class="mermaid-inner">
+      <pre class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1f2533', 'primaryTextColor': '#dce1ea', 'primaryBorderColor': '#4a5470', 'lineColor': '#4a5470', 'secondaryColor': '#1a1f2a', 'tertiaryColor': '#141820', 'background': '#141820', 'mainBkg': '#1f2533', 'nodeBorder': '#4a5470', 'clusterBkg': '#161c26', 'clusterBorder': '#4a5470', 'titleColor': '#dce1ea', 'edgeLabelBackground': '#1a1f2a', 'fontSize': '13px'}, 'flowchart': {'useMaxWidth': false, 'htmlLabels': true, 'curve': 'basis', 'nodeSpacing': 20, 'rankSpacing': 35}}}%%
+flowchart TD
+    START(["<b style='color:#f0f3f8'>Tool use requested</b>"]) --> DENY_RULE
+
+    DENY_RULE{{"<b style='color:#f87171'>Deny rule<br/>exists?</b>"}}
+    DENY_RULE -- "<span style='color:#f87171'>YES</span>" --> BLOCKED(["<b style='color:#f87171'>DENIED</b>"])
+    DENY_RULE -- "<span style='color:#8e96a8'>NO</span>" --> ASK_RULE
+
+    ASK_RULE{{"<b style='color:#e0b468'>Ask rule<br/>exists?</b>"}}
+    ASK_RULE -- "<span style='color:#e0b468'>YES</span>" --> ASK_RESULT["<b style='color:#e0b468'>Result = ASK</b><br/><span style='color:#8e96a8;font-size:11px'>unless sandbox auto-allows</span>"]
+    ASK_RULE -- "<span style='color:#8e96a8'>NO</span>" --> ALLOW_RULE
+
+    ALLOW_RULE{{"<b style='color:#4ade80'>Allow rule<br/>exists?</b>"}}
+    ALLOW_RULE -- "<span style='color:#4ade80'>YES</span>" --> ALLOWED(["<b style='color:#4ade80'>ALLOWED</b>"])
+    ALLOW_RULE -- "<span style='color:#8e96a8'>NO</span>" --> CUSTOM
+
+    CUSTOM["<b style='color:#a78bfa'>tool.checkPermissions()</b><br/><span style='color:#8e96a8;font-size:11px'>Tool-specific validation logic<br/>(Bash security, file staleness, etc.)</span>"]
+    CUSTOM --> CUSTOM_RESULT{{"<b style='color:#a78bfa'>Result?</b>"}}
+    CUSTOM_RESULT -- "<span style='color:#4ade80'>allow</span>" --> ALLOWED
+    CUSTOM_RESULT -- "<span style='color:#f87171'>deny</span>" --> BLOCKED
+    CUSTOM_RESULT -- "<span style='color:#e0b468'>ask</span>" --> MODE_CHECK
+
+    ASK_RESULT --> MODE_CHECK
+
+    MODE_CHECK{{"<b style='color:#e0b468'>Permission<br/>mode?</b>"}}
+    MODE_CHECK -- "<span style='color:#f87171'>bypassPermissions</span>" --> ALLOWED
+    MODE_CHECK -- "<span style='color:#f87171'>dontAsk</span>" --> BLOCKED
+    MODE_CHECK -- "<span style='color:#fb923c'>auto</span>" --> AUTO_PATH
+    MODE_CHECK -- "<span style='color:#5b8def'>default / acceptEdits / plan</span>" --> USER_PROMPT
+
+    subgraph AUTO["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>AUTO MODE PATH</span>"]
+        AUTO_PATH["<b style='color:#f0f3f8'>Try fast paths</b>"]
+        AUTO_PATH --> FAST1{{"<b style='color:#8e96a8;font-size:11px'>acceptEdits<br/>would allow?</b>"}}
+        FAST1 -- "<span style='color:#4ade80'>YES</span>" --> FAST_ALLOW(["<b style='color:#4ade80'>ALLOWED</b><br/><span style='color:#8e96a8;font-size:10px'>fast path</span>"])
+        FAST1 -- "<span style='color:#8e96a8'>NO</span>" --> FAST2{{"<b style='color:#8e96a8;font-size:11px'>Safe tool<br/>allowlist?</b>"}}
+        FAST2 -- "<span style='color:#4ade80'>YES</span>" --> FAST_ALLOW
+        FAST2 -- "<span style='color:#8e96a8'>NO</span>" --> CLASSIFIER
+
+        CLASSIFIER["<b style='color:#fb923c'>AI Classifier</b><br/><span style='color:#8e96a8;font-size:11px'>Evaluates action against<br/>full conversation transcript</span>"]
+        CLASSIFIER --> CL_RESULT{{"<b style='color:#fb923c;font-size:11px'>Classifier<br/>result?</b>"}}
+        CL_RESULT -- "<span style='color:#4ade80'>safe</span>" --> FAST_ALLOW
+        CL_RESULT -- "<span style='color:#f87171'>block</span>" --> DENIAL_CHECK
+        CL_RESULT -- "<span style='color:#8e96a8'>unavailable</span>" --> USER_PROMPT
+
+        DENIAL_CHECK{{"<b style='color:#f87171;font-size:11px'>Denial<br/>limit hit?</b>"}}
+        DENIAL_CHECK -- "<span style='color:#f87171'>3 consecutive<br/>or 20 total</span>" --> USER_PROMPT
+        DENIAL_CHECK -- "<span style='color:#8e96a8'>NO</span>" --> AUTO_BLOCKED(["<b style='color:#f87171'>DENIED</b>"])
+    end
+
+    USER_PROMPT["<b style='color:#5b8def'>Show permission dialog</b><br/><span style='color:#8e96a8;font-size:11px'>User approves, denies,<br/>or sets always-allow rule</span>"]
+
+    classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
+    class DENY_RULE,ASK_RULE,ALLOW_RULE,CUSTOM,CUSTOM_RESULT,ASK_RESULT,MODE_CHECK nodeDefault
+    class AUTO_PATH,FAST1,FAST2,CLASSIFIER,CL_RESULT,DENIAL_CHECK nodeDefault
+
+    style START fill:#1f2533,stroke:#f0f3f8,stroke-width:2px,color:#f0f3f8
+    style BLOCKED fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
+    style AUTO_BLOCKED fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
+    style ALLOWED fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+    style FAST_ALLOW fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+    style USER_PROMPT fill:#1f2533,stroke:#5b8def,stroke-width:2px
+    style AUTO fill:#161c26,stroke:#fb923c,stroke-width:1.5px
+
+    linkStyle 0 stroke:#f0f3f8,stroke-width:1.5px
+    linkStyle 1 stroke:#f87171,stroke-width:1.5px
+      </pre>
+    </div>
+  </div>
+
+  <h3>Rule Sources (Priority Order)</h3>
+  <p>Permission rules come from multiple sources. When sources conflict, earlier sources win:</p>
+  <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><h5>CLI Flags</h5><p><code>--allowedTools "Bash(prefix:npm)"</code> and <code>--disallowedTools "WebFetch"</code> — highest priority, set at launch.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><h5>Policy Settings</h5><p>Organization-level rules pushed from Anthropic's API. Enterprise admins can restrict tools globally.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">3</div><div class="flow-body"><h5>User Settings</h5><p><code>~/.claude/settings.json</code> — personal allow/deny rules that persist across sessions.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">4</div><div class="flow-body"><h5>Project Settings</h5><p><code>.claude/settings.json</code> in the project root — team-shared rules committed to the repo.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">5</div><div class="flow-body"><h5>Session Rules</h5><p>Temporary rules from "always allow" choices in the permission dialog. Cleared when the session ends.</p></div></div>
+</section>
+
+<!-- ══════════════════ AUTO MODE ══════════════════ -->
+<section id="auto-mode">
+  <h2><span class="num">04</span>Auto Mode &amp; AI Classifier</h2>
+  <div class="divider"></div>
+  <p class="lead">Auto mode uses an AI classifier to evaluate each action against the conversation context. But it has multiple safety rails to prevent runaway approvals.</p>
+
+  <h3>Safe Tool Allowlist (No Classifier Needed)</h3>
+  <p>These tools are auto-approved without calling the classifier:</p>
+  <div class="cards">
+    <div class="card card-green"><div class="card-icon">R</div><h4>Read-Only Tools</h4><p>FileRead, Grep, Glob, LSP, ToolSearch, ListMcpResources, ReadMcpResource — can't modify anything.</p></div>
+    <div class="card card-blue"><div class="card-icon">T</div><h4>Task Management</h4><p>TaskCreate, TaskGet, TaskUpdate, TaskList — only track internal state, no side effects.</p></div>
+    <div class="card card-purple"><div class="card-icon">U</div><h4>User Interaction</h4><p>AskUserQuestion, EnterPlanMode, ExitPlanMode — involve user in the loop.</p></div>
+    <div class="card card-cyan"><div class="card-icon">S</div><h4>Coordination</h4><p>TeamCreate, TeamDelete, SendMessage, Sleep — orchestration primitives.</p></div>
+  </div>
+
+  <h3>Dangerous Permission Stripping</h3>
+  <p>When entering auto mode, rules that would bypass the classifier are <strong>temporarily removed</strong>:</p>
+  <table class="info-table">
+    <thead><tr><th>Pattern</th><th>Why it's dangerous</th></tr></thead>
+    <tbody>
+      <tr><td><code>Bash(*)</code></td><td>Allows all shell commands without classifier evaluation</td></tr>
+      <tr><td><code>Bash(python:*)</code></td><td>Python can execute arbitrary code — shell-within-a-shell</td></tr>
+      <tr><td><code>Bash(node:*)</code>, <code>Bash(ruby:*)</code>, etc.</td><td>Same escape risk via interpreter prefix</td></tr>
+      <tr><td><code>Agent(*)</code></td><td>Would auto-approve spawning sub-agents before classifier sees the prompt</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Denial Tracking Circuit Breaker</h3>
+  <div class="callout warn">
+    <strong>After 3 consecutive denials or 20 total denials</strong>, auto mode stops blocking and falls back to interactive permission prompts. This prevents the classifier from silently deadlocking a session. Counters reset when the total limit is hit.
+  </div>
+</section>
+
+<!-- ══════════════════ BASH SAFETY ══════════════════ -->
+<section id="bash-safety">
+  <h2><span class="num">05</span>Bash Tool Security</h2>
+  <div class="divider"></div>
+  <p class="lead">The Bash tool has the deepest security surface — <strong>~12,400 lines of validation code</strong> across 18 files. Every command is parsed, analyzed, and gated before execution.</p>
+
+  <div class="mermaid-wrap size-md" id="mwrap-bash">
+    <div class="zoom-hint">Scroll to zoom · Drag to pan · Double-click to reset · Resize from corner</div>
+    <div class="mermaid-inner">
+      <pre class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1f2533', 'primaryTextColor': '#dce1ea', 'primaryBorderColor': '#4a5470', 'lineColor': '#4a5470', 'secondaryColor': '#1a1f2a', 'tertiaryColor': '#141820', 'background': '#141820', 'mainBkg': '#1f2533', 'nodeBorder': '#4a5470', 'clusterBkg': '#161c26', 'clusterBorder': '#4a5470', 'titleColor': '#dce1ea', 'edgeLabelBackground': '#1a1f2a', 'fontSize': '13px'}, 'flowchart': {'useMaxWidth': false, 'htmlLabels': true, 'curve': 'basis', 'nodeSpacing': 20, 'rankSpacing': 32}}}%%
+flowchart TD
+    CMD(["<b style='color:#f0f3f8'>Shell command input</b>"])
+
+    CMD --> PARSE["<b style='color:#f0f3f8'>Command Parsing</b><br/><span style='color:#8e96a8;font-size:11px'>Strip safe wrappers (nohup, timeout, env vars)<br/>Extract base command + arguments</span>"]
+
+    PARSE --> SEC["<b style='color:#f87171'>bashSecurity.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Injection detection · Symlink escapes<br/>Dangerous pattern matching (2,600 lines)</span>"]
+
+    SEC --> PATH_V["<b style='color:#fb923c'>pathValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Protected paths: /, ~, /usr, C:\\<br/>Shell expansion blocking: $VAR, $(cmd)<br/>UNC path NTLM protection (1,300 lines)</span>"]
+
+    PATH_V --> RO["<b style='color:#a78bfa'>readOnlyValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Dangerous tput capabilities blocked<br/>ss/fd command restrictions<br/>tput -S defense-in-depth (2,000 lines)</span>"]
+
+    RO --> DESTR["<b style='color:#e0b468'>destructiveCommandWarning.ts</b><br/><span style='color:#8e96a8;font-size:11px'>git reset --hard · git push --force<br/>rm -rf · DROP TABLE · terraform destroy</span>"]
+
+    DESTR --> PERM["<b style='color:#5b8def'>bashPermissions.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Rule matching with wildcard/prefix/exact<br/>Binary hijack var detection (2,600 lines)</span>"]
+
+    PERM --> SED["<b style='color:#22d3ee'>sedValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Allowlist-based sed command validation<br/>Blocks writes to dangerous files (680 lines)</span>"]
+
+    SED --> SANDBOX_CHK{{"<b style='color:#8e96a8;font-size:11px'>Sandbox<br/>enabled?</b>"}}
+    SANDBOX_CHK -- "<span style='color:#4ade80'>YES</span>" --> SANDBOX_EXEC["<b style='color:#22d3ee'>Sandboxed execution</b><br/><span style='color:#8e96a8;font-size:11px'>FS restrictions · Network allowlist</span>"]
+    SANDBOX_CHK -- "<span style='color:#8e96a8'>NO</span>" --> EXEC
+
+    SANDBOX_EXEC --> EXEC(["<b style='color:#4ade80'>Execute</b>"])
+
+    classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
+    class PARSE,SEC,PATH_V,RO,DESTR,PERM,SED,SANDBOX_CHK,SANDBOX_EXEC nodeDefault
+    style CMD fill:#1f2533,stroke:#f0f3f8,stroke-width:2px,color:#f0f3f8
+    style EXEC fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+      </pre>
+    </div>
+  </div>
+
+  <h3>Key Protections</h3>
+  <div class="expandable open" onclick="this.classList.toggle('open')">
+    <div class="expandable-header"><h4>Dangerous Removal Path Blocking</h4><span class="expandable-arrow">&#9654;</span></div>
+    <div class="expandable-body"><div class="expandable-content">
+      Hard-blocks <code>rm</code> and <code>rmdir</code> on critical paths — <strong>not bypassable by any permission rule</strong>:<br/><br/>
+      <code>/</code> (root) · <code>~</code> (home dir) · Direct root children (<code>/usr</code>, <code>/tmp</code>, <code>/etc</code>, <code>/var</code>)<br/>
+      Windows drive roots (<code>C:\</code>, <code>D:\</code>) and direct children (<code>C:\Windows</code>, <code>C:\Users</code>)<br/>
+      Wildcards (<code>*</code>, <code>/*</code>) always rejected regardless of path.
+    </div></div>
+  </div>
+  <div class="expandable" onclick="this.classList.toggle('open')">
+    <div class="expandable-header"><h4>Shell Expansion Blocking</h4><span class="expandable-arrow">&#9654;</span></div>
+    <div class="expandable-body"><div class="expandable-content">
+      Path arguments are checked for shell expansion syntax that could redirect operations:<br/><br/>
+      <code>$VAR</code> and <code>${VAR}</code> — environment variable expansion<br/>
+      <code>$(cmd)</code> — command substitution<br/>
+      <code>%VAR%</code> — Windows environment variables<br/>
+      <code>=cmd</code> — Zsh equals expansion<br/>
+      <code>~user</code>, <code>~+</code>, <code>~-</code> — tilde variants that <code>expandTilde()</code> can't handle safely<br/>
+      UNC paths (<code>\\hostname\share</code>) — prevents NTLM credential leaks on Windows
+    </div></div>
+  </div>
+  <div class="expandable" onclick="this.classList.toggle('open')">
+    <div class="expandable-header"><h4>Destructive Git Operation Warnings</h4><span class="expandable-arrow">&#9654;</span></div>
+    <div class="expandable-body"><div class="expandable-content">
+      These git commands trigger explicit warnings and require higher permission levels:<br/><br/>
+      <code>git reset --hard</code> · <code>git push --force</code> · <code>git branch -D</code><br/>
+      <code>git stash drop</code> · <code>git checkout .</code> · <code>git clean -f</code><br/>
+      <code>--no-verify</code> (hook bypass) · <code>--amend</code> on published commits<br/>
+      Also: <code>DROP TABLE</code>, <code>TRUNCATE</code>, <code>kubectl delete</code>, <code>terraform destroy</code>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════════ FILE SAFETY ══════════════════ -->
+<section id="file-safety">
+  <h2><span class="num">06</span>File Operation Safety</h2>
+  <div class="divider"></div>
+  <p class="lead">File write and edit tools enforce staleness checks, path validation, and secret guards before touching the filesystem.</p>
+
+  <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><h5>Read-Before-Write Requirement</h5><p>The model must have read a file (via FileReadTool) before it can write or edit it. Prevents blind overwrites. Tracked via read timestamps.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><h5>Staleness Detection</h5><p>Before writing, the tool checks if the file has been modified since the last read — comparing both timestamp and content. If modified externally, the write is rejected.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">3</div><div class="flow-body"><h5>UNC Path Blocking</h5><p>Paths starting with <code>\\</code> or <code>//</code> are blocked to prevent NTLM credential leaks via Windows SMB authentication.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">4</div><div class="flow-body"><h5>Team Memory Secret Guard</h5><p><code>checkTeamMemSecrets()</code> prevents writing secrets to shared team memory files — credentials would be visible to teammates.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">5</div><div class="flow-body"><h5>Deny Rules Override Allow</h5><p>Even with an allowlist match, an explicit deny rule always blocks. Prevents privilege escalation through rule confusion.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">6</div><div class="flow-body"><h5>Size &amp; Encoding Safety</h5><p>FileEditTool rejects files over 1 GiB (V8 string limit). Auto-detects UTF-16LE vs UTF-8. Normalizes CRLF line endings cross-platform.</p></div></div>
+</section>
+
+<!-- ══════════════════ AGENT RESTRICTIONS ══════════════════ -->
+<section id="agent-restrictions">
+  <h2><span class="num">07</span>Agent &amp; Sub-Agent Restrictions</h2>
+  <div class="divider"></div>
+  <p class="lead">When Claude spawns sub-agents, they operate with <strong>restricted tool sets</strong> — hardcoded lists that can't be overridden by rules or permissions.</p>
+
+  <table class="info-table">
+    <thead><tr><th>Agent Type</th><th>Blocked Tools</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>All Agents</strong></td>
+        <td><code>TaskOutput</code>, <code>ExitPlanMode</code>, <code>EnterPlanMode</code>, <code>AskUserQuestion</code>, <code>TaskStop</code></td>
+        <td>Sub-agents can't control the parent session's planning state or prompt the user directly</td>
+      </tr>
+      <tr>
+        <td><strong>All Agents (default)</strong></td>
+        <td><code>AgentTool</code></td>
+        <td>Prevents recursive agent spawning (no agent inception). Overridden for Anthropic-internal users.</td>
+      </tr>
+      <tr>
+        <td><strong>Async Agents</strong></td>
+        <td>Only allowed: FileRead/Write/Edit, Bash, Grep, Glob, WebSearch, WebFetch, Skill, TodoWrite, NotebookEdit, Worktree tools</td>
+        <td>Background agents get a strict allowlist — no task management, no user interaction</td>
+      </tr>
+      <tr>
+        <td><strong>In-Process Teammates</strong></td>
+        <td>Limited to: TaskCreate/Get/List/Update, SendMessage, Cron tools</td>
+        <td>Teammates coordinate via messages, not direct tool use</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <strong>MCP tools are always allowed for agents.</strong> This is a deliberate exception — external MCP tools have their own approval flow and are considered pre-vetted by the server approval step.
+  </div>
+</section>
+
+<!-- ══════════════════ HARD BLOCKS ══════════════════ -->
+<section id="hard-blocks">
+  <h2><span class="num">08</span>Hard Blocks (Unbypassable)</h2>
+  <div class="divider"></div>
+  <p class="lead">These protections fire regardless of permission mode, rules, or user choices. They are <strong>not overridable</strong>.</p>
+
+  <div class="cards">
+    <div class="card card-red"><div class="card-icon">P</div><h4>Protected Removal Paths</h4><p><code>/</code>, <code>~</code>, <code>/usr</code>, <code>/tmp</code>, <code>/etc</code>, <code>C:\</code>, <code>C:\Windows</code>, <code>C:\Users</code>. No <code>rm</code> or <code>rmdir</code> on these, ever. Wildcards (<code>*</code>) rejected in all removal paths.</p></div>
+    <div class="card card-red"><div class="card-icon">S</div><h4>Shell Expansion in Paths</h4><p><code>$VAR</code>, <code>${VAR}</code>, <code>$(cmd)</code>, <code>%VAR%</code>, <code>=cmd</code> blocked in file path arguments. Prevents TOCTOU attacks and redirect-through-expansion.</p></div>
+    <div class="card card-red"><div class="card-icon">U</div><h4>UNC / NTLM Credential Protection</h4><p><code>\\hostname\share</code> paths blocked in file ops and bash. Prevents Windows SMB auto-authentication leaking NTLM hashes to attacker-controlled servers.</p></div>
+    <div class="card card-red"><div class="card-icon">T</div><h4>Team Memory Secret Guard</h4><p>Secrets and credentials cannot be written to shared team memory files — even with full file write permissions.</p></div>
+    <div class="card card-red"><div class="card-icon">G</div><h4>Glob Patterns in Write Paths</h4><p>File write/edit operations require exact paths. Glob patterns like <code>*.ts</code> are rejected — prevents accidental mass overwrites.</p></div>
+    <div class="card card-red"><div class="card-icon">A</div><h4>Agent Tool Disallow Lists</h4><p>Hardcoded in constants — sub-agents can never use <code>AskUserQuestion</code>, <code>TaskStop</code>, or spawn recursive agents.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════ TRUST MODEL ══════════════════ -->
+<section id="trust">
+  <h2><span class="num">09</span>Trust Model</h2>
+  <div class="divider"></div>
+  <p class="lead">Before Claude Code can operate in a directory, the user must accept a trust dialog that discloses what capabilities the project configuration enables.</p>
+
+  <h3>Trust Dialog Checks</h3>
+  <p>The dialog scans the project and surfaces what needs approval:</p>
+  <table class="info-table">
+    <thead><tr><th>Check</th><th>What it detects</th></tr></thead>
+    <tbody>
+      <tr><td>MCP Servers</td><td>Project-scoped MCP servers in <code>.claude/mcp.json</code> that would connect to external services</td></tr>
+      <tr><td>Hooks</td><td>Custom hooks in settings that run shell commands on tool events</td></tr>
+      <tr><td>Bash Execution</td><td>Permission rules, slash commands, or skills that would enable shell access</td></tr>
+      <tr><td>API Key Helper</td><td>External auth token sources configured in settings</td></tr>
+      <tr><td>AWS / GCP Commands</td><td>Cloud credential commands that could incur costs or access resources</td></tr>
+      <tr><td>Dangerous Env Vars</td><td>Restricted environment variables in the project config</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Trusted Device System</h3>
+  <p>For remote/bridge sessions, a <strong>trusted device token</strong> provides elevated authentication:</p>
+  <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><h5>Enrollment</h5><p>During <code>/login</code>, a POST to <code>/auth/trusted_devices</code> registers the device. Must happen within 10 minutes of login.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><h5>Token Storage</h5><p>90-day rolling-expiry token stored in the macOS keychain. Sent as <code>X-Trusted-Device-Token</code> header on bridge calls.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">3</div><div class="flow-body"><h5>Gate</h5><p>Controlled by feature flag <code>tengu_sessions_elevated_auth_enforcement</code>. Server requires <code>SecurityTier=ELEVATED</code>.</p></div></div>
+</section>
+
+<!-- ══════════════════ ENTERPRISE ══════════════════ -->
+<section id="enterprise">
+  <h2><span class="num">10</span>Enterprise Security Controls</h2>
+  <div class="divider"></div>
+  <p class="lead">Three layers of enterprise configuration — all overriding user settings — ensure organizations can enforce security policies.</p>
+
+  <div class="mermaid-wrap size-md" id="mwrap-enterprise">
+    <div class="zoom-hint">Scroll to zoom · Drag to pan · Double-click to reset · Resize from corner</div>
+    <div class="mermaid-inner">
+      <pre class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1f2533', 'primaryTextColor': '#dce1ea', 'primaryBorderColor': '#4a5470', 'lineColor': '#4a5470', 'secondaryColor': '#1a1f2a', 'tertiaryColor': '#141820', 'background': '#141820', 'mainBkg': '#1f2533', 'nodeBorder': '#4a5470', 'clusterBkg': '#161c26', 'clusterBorder': '#4a5470', 'titleColor': '#dce1ea', 'edgeLabelBackground': '#1a1f2a', 'fontSize': '13px'}, 'flowchart': {'useMaxWidth': false, 'htmlLabels': true, 'curve': 'basis'}}}%%
+flowchart TD
+    subgraph REMOTE_S["<span style='color:#f87171;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>REMOTE MANAGED SETTINGS (HIGHEST)</span>"]
+        RM["<b style='color:#f0f3f8'>Server-Pushed Config</b><br/><span style='color:#8e96a8;font-size:11px'>Fetched from Anthropic API<br/>ETag caching · 60-min polling<br/>Team + Enterprise subscribers</span>"]
+    end
+
+    subgraph MDM_S["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>MDM / DEVICE MANAGEMENT</span>"]
+        direction LR
+        MAC["<b style='color:#f0f3f8'>macOS</b><br/><span style='color:#8e96a8;font-size:11px'>/Library/Managed Preferences/<br/>com.anthropic.claudecode.plist</span>"]
+        WIN["<b style='color:#f0f3f8'>Windows</b><br/><span style='color:#8e96a8;font-size:11px'>HKLM\\SOFTWARE\\Policies\\<br/>ClaudeCode</span>"]
+        LIN["<b style='color:#f0f3f8'>Linux</b><br/><span style='color:#8e96a8;font-size:11px'>/etc/claude-code/<br/>managed-settings.json</span>"]
+    end
+
+    subgraph POLICY_S["<span style='color:#e0b468;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>POLICY LIMITS API</span>"]
+        PL["<b style='color:#f0f3f8'>Organization Restrictions</b><br/><span style='color:#8e96a8;font-size:11px'>Fetched from /api/claude_code/policy_limits<br/>SHA256 checksum · 5 retries · 0o600 cache file<br/>Fails open (except feedback in essential-traffic mode)</span>"]
+    end
+
+    subgraph USER_S["<span style='color:#5b8def;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>USER SETTINGS (LOWEST)</span>"]
+        US["<b style='color:#f0f3f8'>~/.claude/settings.json</b><br/><span style='color:#8e96a8;font-size:11px'>Personal preferences · tool rules<br/>Overridden by everything above</span>"]
+    end
+
+    REMOTE_S --> MDM_S --> POLICY_S --> USER_S
+
+    classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
+    class RM,MAC,WIN,LIN,PL,US nodeDefault
+    style REMOTE_S fill:#161c26,stroke:#f87171,stroke-width:1.5px
+    style MDM_S fill:#161c26,stroke:#fb923c,stroke-width:1.5px
+    style POLICY_S fill:#161c26,stroke:#e0b468,stroke-width:1.5px
+    style USER_S fill:#161c26,stroke:#5b8def,stroke-width:1.5px
+      </pre>
+    </div>
+  </div>
+
+  <h3>Remote Kill Switches</h3>
+  <table class="info-table">
+    <thead><tr><th>Gate</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>tengu_disable_bypass_permissions_mode</code></td><td>Remotely disables bypassPermissions mode for all users in the org</td></tr>
+      <tr><td><code>tengu_auto_mode_config.enabled</code></td><td>Circuit breaker for auto mode — can be disabled remotely via GrowthBook</td></tr>
+      <tr><td><code>sandbox.network.allowManagedDomainsOnly</code></td><td>Restricts all network access to enterprise-approved domains</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══════════════════ MCP SECURITY ══════════════════ -->
+<section id="mcp-security">
+  <h2><span class="num">11</span>MCP Server Security</h2>
+  <div class="divider"></div>
+  <p class="lead">MCP (Model Context Protocol) servers connect Claude Code to external tools. Each server goes through its own approval pipeline.</p>
+
+  <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><h5>Channel Allowlist</h5><p>Servers from marketplace plugins are checked against a GrowthBook-sourced allowlist (<code>tengu_harbor_ledger</code>). Unapproved servers require <code>--dangerously-load-development-channels</code>.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><h5>Project Approval Dialog</h5><p>Project-scoped MCP servers (in <code>.claude/mcp.json</code>) trigger an approval dialog via the trust system. Users can approve individually or in bulk.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">3</div><div class="flow-body"><h5>OAuth / XAA Authentication</h5><p>Remote servers authenticate via RFC 8414 OAuth discovery. Enterprise XAA (Cross-App Access) uses a two-leg token exchange: <code>id_token</code> → ID-JAG → <code>access_token</code>.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">4</div><div class="flow-body"><h5>Structured Permission Relay</h5><p>Channel permission requests use 5-letter codes (FNV-1a hash, alphabet excludes <code>l</code>) parsed server-side to prevent accidental approvals from stray text.</p></div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-step"><div class="flow-num">5</div><div class="flow-body"><h5>Token Redaction</h5><p>All tokens (<code>access_token</code>, <code>refresh_token</code>, <code>id_token</code>, <code>assertion</code>, <code>client_secret</code>) are regex-stripped from logs and debug output.</p></div></div>
+</section>
+
+<!-- ══════════════════ CREDENTIALS ══════════════════ -->
+<section id="credentials">
+  <h2><span class="num">12</span>Credential Storage</h2>
+  <div class="divider"></div>
+  <p class="lead">Credentials are stored in the macOS Keychain with multiple fallback layers and anti-leak protections.</p>
+
+  <div class="cards">
+    <div class="card card-green"><div class="card-icon">K</div><h4>macOS Keychain (Primary)</h4><p>Uses <code>security</code> CLI with <code>find-generic-password</code> / <code>add-generic-password</code>. 30-second TTL cache avoids repeated subprocess spawns. Cache generation tracking prevents race conditions.</p><span class="path">utils/secureStorage/macOsKeychainStorage.ts</span></div>
+    <div class="card card-orange"><div class="card-icon">F</div><h4>Plaintext Fallback (Secondary)</h4><p><code>.credentials.json</code> with <code>chmod 600</code>. Used when keychain is locked (common in SSH sessions). Automatically deleted when keychain becomes available.</p><span class="path">utils/secureStorage/plainTextStorage.ts</span></div>
+    <div class="card card-purple"><div class="card-icon">H</div><h4>Hex Encoding for Process Safety</h4><p>Credentials over 4KB use hex encoding in CLI args: <code>Buffer.from(json).toString('hex')</code>. Prevents process monitors from seeing plaintext tokens.</p><span class="path">utils/secureStorage/macOsKeychainHelpers.ts</span></div>
+    <div class="card card-cyan"><div class="card-icon">P</div><h4>Startup Prefetch</h4><p>Keychain reads fire as side-effect imports at the top of <code>main.tsx</code> — before the rest of the app loads. Saves ~65ms on macOS by parallelizing with module evaluation.</p><span class="path">utils/secureStorage/keychainPrefetch.ts</span></div>
+  </div>
+
+  <h3>Stored Credentials</h3>
+  <table class="info-table">
+    <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>accessToken</code></td><td>OAuth access token for Anthropic API</td></tr>
+      <tr><td><code>refreshToken</code></td><td>OAuth refresh token for token renewal</td></tr>
+      <tr><td><code>idToken</code></td><td>OpenID Connect ID token (used in XAA flows)</td></tr>
+      <tr><td><code>trustedDeviceToken</code></td><td>90-day device authentication for bridge/remote sessions</td></tr>
+      <tr><td><code>mcpOAuth[server]</code></td><td>Per-MCP-server OAuth tokens (access + refresh)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout safe">
+    <strong>Stale-while-error pattern:</strong> If the keychain is locked or a refresh fails, the cached credential is served rather than failing hard. This prevents session drops during transient keychain issues.
+  </div>
+</section>
+
+</main>
+
+<!-- Mermaid initialization -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    securityLevel: 'loose',
+    themeVariables: {
+      primaryColor: '#1f2533',
+      primaryTextColor: '#dce1ea',
+      primaryBorderColor: '#4a5470',
+      lineColor: '#4a5470',
+      secondaryColor: '#1a1f2a',
+      tertiaryColor: '#141820',
+      background: '#141820',
+      mainBkg: '#1f2533',
+      nodeBorder: '#4a5470',
+      clusterBkg: '#161c26',
+      clusterBorder: '#4a5470',
+      titleColor: '#dce1ea',
+      edgeLabelBackground: '#1a1f2a',
+      fontSize: '13px'
+    },
+    flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' }
+  });
+
+  await mermaid.run();
+  await new Promise(r => setTimeout(r, 200));
+
+  // Zoom/pan for each mermaid wrapper
+  document.querySelectorAll('.mermaid-wrap').forEach(wrapper => {
+    const inner = wrapper.querySelector('.mermaid-inner');
+    const svg = wrapper.querySelector('svg');
+    if (!inner || !svg) return;
+
+    const svgRect = svg.getBoundingClientRect();
+    const wrapRect = wrapper.getBoundingClientRect();
+    const initialScale = Math.min((wrapRect.width - 24) / svgRect.width, (wrapRect.height - 24) / svgRect.height);
+
+    let scale = initialScale;
+    let panX = (wrapRect.width - svgRect.width * scale) / 2;
+    let panY = 12;
+    let isPanning = false;
+    let startX, startY, startPanX, startPanY;
+
+    function applyTransform() {
+      inner.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    }
+    applyTransform();
+
+    wrapper.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = wrapper.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const oldScale = scale;
+      const factor = e.deltaY > 0 ? 0.9 : 1.1;
+      scale = Math.min(Math.max(scale * factor, 0.1), 10);
+      panX = mouseX - (mouseX - panX) * (scale / oldScale);
+      panY = mouseY - (mouseY - panY) * (scale / oldScale);
+      applyTransform();
+    });
+
+    wrapper.addEventListener('mousedown', (e) => { isPanning = true; startX = e.clientX; startY = e.clientY; startPanX = panX; startPanY = panY; });
+    window.addEventListener('mousemove', (e) => { if (!isPanning) return; panX = startPanX + (e.clientX - startX); panY = startPanY + (e.clientY - startY); applyTransform(); });
+    window.addEventListener('mouseup', () => { isPanning = false; });
+
+    wrapper.addEventListener('touchstart', (e) => { if (e.touches.length === 1) { isPanning = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY; startPanX = panX; startPanY = panY; } }, { passive: true });
+    wrapper.addEventListener('touchmove', (e) => { if (!isPanning || e.touches.length !== 1) return; panX = startPanX + (e.touches[0].clientX - startX); panY = startPanY + (e.touches[0].clientY - startY); applyTransform(); }, { passive: true });
+    wrapper.addEventListener('touchend', () => { isPanning = false; });
+
+    wrapper.addEventListener('dblclick', () => {
+      const wr = wrapper.getBoundingClientRect();
+      const sr = svg.getBoundingClientRect();
+      const naturalW = sr.width / scale;
+      const naturalH = sr.height / scale;
+      scale = Math.min((wr.width - 24) / naturalW, (wr.height - 24) / naturalH);
+      panX = (wr.width - naturalW * scale) / 2;
+      panY = Math.max(12, (wr.height - naturalH * scale) / 2);
+      applyTransform();
+    });
+  });
+</script>
+
+<!-- Nav scroll spy -->
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const activeLink = document.querySelector('.nav-link[href="#' + entry.target.id + '"]');
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>
