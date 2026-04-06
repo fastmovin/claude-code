@@ -16,23 +16,23 @@
   --text: #dce1ea;
   --text-dim: #8e96a8;
   --text-bright: #f0f3f8;
-  --accent: #e0b468;
-  --accent-dim: #c49440;
-  --accent-glow: rgba(224,180,104,0.14);
-  --blue: #5b8def;
-  --blue-dim: rgba(91,141,239,0.15);
-  --green: #4ade80;
-  --green-dim: rgba(74,222,128,0.12);
-  --red: #f87171;
-  --red-dim: rgba(248,113,113,0.12);
-  --purple: #a78bfa;
-  --purple-dim: rgba(167,139,250,0.12);
-  --cyan: #22d3ee;
-  --cyan-dim: rgba(34,211,238,0.12);
-  --orange: #fb923c;
-  --orange-dim: rgba(251,146,60,0.12);
-  --pink: #f472b6;
-  --pink-dim: rgba(244,114,182,0.12);
+  --accent: #E6C34F;
+  --accent-dim: #b8a830;
+  --accent-glow: rgba(230,195,79,0.14);
+  --blue: #006AF4;
+  --blue-dim: rgba(0,106,244,0.15);
+  --green: #83B258;
+  --green-dim: rgba(131,178,88,0.12);
+  --red: #D4634B;
+  --red-dim: rgba(212,99,75,0.12);
+  --purple: #8B7EC8;
+  --purple-dim: rgba(139,126,200,0.12);
+  --cyan: #186098;
+  --cyan-dim: rgba(24,96,152,0.12);
+  --orange: #E6C34F;
+  --orange-dim: rgba(230,195,79,0.12);
+  --pink: #C7BA92;
+  --pink-dim: rgba(199,186,146,0.12);
   --mono: 'IBM Plex Mono', monospace;
   --serif: 'Instrument Serif', Georgia, serif;
   --sans: 'DM Sans', -apple-system, sans-serif;
@@ -106,7 +106,7 @@ code { font-family: var(--mono); font-size: 12px; background: rgba(255,255,255,0
 
 /* Flow steps */
 .flow-step { display: flex; align-items: flex-start; gap: 16px; margin: 16px 0; }
-.flow-num { width: 28px; height: 28px; border-radius: 50%; background: var(--red-dim); border: 1px solid rgba(248,113,113,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--red); flex-shrink: 0; margin-top: 2px; }
+.flow-num { width: 28px; height: 28px; border-radius: 50%; background: var(--red-dim); border: 1px solid rgba(212,99,75,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--red); flex-shrink: 0; margin-top: 2px; }
 .flow-body h5 { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
 .flow-body p { font-size: 13px; color: var(--text-dim); margin-bottom: 0; }
 .flow-connector { width: 1px; height: 12px; background: var(--border); margin-left: 14px; }
@@ -119,11 +119,11 @@ code { font-family: var(--mono); font-size: 12px; background: rgba(255,255,255,0
 
 /* Badges */
 .badge { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin: 2px 4px 2px 0; font-weight: 500; }
-.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
-.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
-.badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
-.badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,141,239,0.2); }
-.badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(212,99,75,0.2); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(131,178,88,0.2); }
+.badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(230,195,79,0.2); }
+.badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(0,106,244,0.2); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(139,126,200,0.2); }
 
 /* Expandable */
 .expandable { border: 1px solid var(--border); border-radius: var(--radius); margin: 10px 0; overflow: hidden; }
@@ -208,46 +208,46 @@ code { font-family: var(--mono); font-size: 12px; background: rgba(255,255,255,0
 flowchart TD
     TOOL_USE["<b style='color:#f0f3f8'>Model requests tool_use</b>"]
 
-    subgraph L1["<span style='color:#f87171;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 1 — ENTERPRISE POLICY</span>"]
+    subgraph L1["<span style='color:#D4634B;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 1 — ENTERPRISE POLICY</span>"]
         POL["<b style='color:#f0f3f8'>Policy Limits</b><br/><span style='color:#8e96a8;font-size:11px'>Org-level tool restrictions via API</span>"]
         MDM["<b style='color:#f0f3f8'>MDM Settings</b><br/><span style='color:#8e96a8;font-size:11px'>macOS plist / Windows registry</span>"]
         REMOTE["<b style='color:#f0f3f8'>Remote Managed Settings</b><br/><span style='color:#8e96a8;font-size:11px'>Server-pushed config overrides</span>"]
     end
 
-    subgraph L2["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 2 — PERMISSION RULES</span>"]
+    subgraph L2["<span style='color:#E6C34F;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 2 — PERMISSION RULES</span>"]
         direction LR
-        DENY["<b style='color:#f87171'>Deny rules</b><br/><span style='color:#8e96a8;font-size:11px'>Explicit blocks (highest priority)</span>"]
-        ASK["<b style='color:#e0b468'>Ask rules</b><br/><span style='color:#8e96a8;font-size:11px'>Require user/classifier approval</span>"]
-        ALLOW["<b style='color:#4ade80'>Allow rules</b><br/><span style='color:#8e96a8;font-size:11px'>Pre-approved tool patterns</span>"]
+        DENY["<b style='color:#D4634B'>Deny rules</b><br/><span style='color:#8e96a8;font-size:11px'>Explicit blocks (highest priority)</span>"]
+        ASK["<b style='color:#E6C34F'>Ask rules</b><br/><span style='color:#8e96a8;font-size:11px'>Require user/classifier approval</span>"]
+        ALLOW["<b style='color:#83B258'>Allow rules</b><br/><span style='color:#8e96a8;font-size:11px'>Pre-approved tool patterns</span>"]
     end
 
-    subgraph L3["<span style='color:#e0b468;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 3 — PERMISSION MODE</span>"]
+    subgraph L3["<span style='color:#E6C34F;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 3 — PERMISSION MODE</span>"]
         MODE["<b style='color:#f0f3f8'>Mode gate</b><br/><span style='color:#8e96a8;font-size:11px'>default / acceptEdits / plan / auto / bypassPermissions</span>"]
     end
 
-    subgraph L4["<span style='color:#a78bfa;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 4 — TOOL-SPECIFIC VALIDATION</span>"]
+    subgraph L4["<span style='color:#8B7EC8;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 4 — TOOL-SPECIFIC VALIDATION</span>"]
         direction LR
         BASH_V["<b style='color:#f0f3f8'>Bash: 12k lines</b><br/><span style='color:#8e96a8;font-size:11px'>Command parsing, injection<br/>detection, path validation</span>"]
         FILE_V["<b style='color:#f0f3f8'>File: staleness</b><br/><span style='color:#8e96a8;font-size:11px'>Read-before-write, UNC<br/>blocking, encoding checks</span>"]
         AGENT_V["<b style='color:#f0f3f8'>Agent: tool filter</b><br/><span style='color:#8e96a8;font-size:11px'>Hardcoded disallowed<br/>tool lists per agent type</span>"]
     end
 
-    subgraph L5["<span style='color:#22d3ee;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 5 — SANDBOX ENFORCEMENT</span>"]
+    subgraph L5["<span style='color:#186098;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 5 — SANDBOX ENFORCEMENT</span>"]
         SANDBOX["<b style='color:#f0f3f8'>Runtime sandbox</b><br/><span style='color:#8e96a8;font-size:11px'>Filesystem read/write restrictions · Network host allowlists · Managed domain-only mode</span>"]
     end
 
-    subgraph L6["<span style='color:#4ade80;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 6 — HARD BLOCKS (UNBYPASSABLE)</span>"]
+    subgraph L6["<span style='color:#83B258;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 6 — HARD BLOCKS (UNBYPASSABLE)</span>"]
         direction LR
-        PATHS["<b style='color:#f87171'>Protected paths</b><br/><span style='color:#8e96a8;font-size:11px'>/, ~, /usr, C:\\Windows</span>"]
-        SECRETS["<b style='color:#f87171'>Secret guards</b><br/><span style='color:#8e96a8;font-size:11px'>Team memory, UNC/NTLM</span>"]
-        SHELL["<b style='color:#f87171'>Shell expansion</b><br/><span style='color:#8e96a8;font-size:11px'>$VAR, $(cmd) blocked</span>"]
+        PATHS["<b style='color:#D4634B'>Protected paths</b><br/><span style='color:#8e96a8;font-size:11px'>/, ~, /usr, C:\\Windows</span>"]
+        SECRETS["<b style='color:#D4634B'>Secret guards</b><br/><span style='color:#8e96a8;font-size:11px'>Team memory, UNC/NTLM</span>"]
+        SHELL["<b style='color:#D4634B'>Shell expansion</b><br/><span style='color:#8e96a8;font-size:11px'>$VAR, $(cmd) blocked</span>"]
     end
 
-    subgraph L7["<span style='color:#5b8def;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 7 — USER APPROVAL UI</span>"]
+    subgraph L7["<span style='color:#006AF4;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>LAYER 7 — USER APPROVAL UI</span>"]
         DIALOG["<b style='color:#f0f3f8'>Permission dialog</b><br/><span style='color:#8e96a8;font-size:11px'>Tool-specific preview with approve / deny / always-allow options</span>"]
     end
 
-    EXECUTE(["<b style='color:#4ade80'>Execute tool</b>"])
+    EXECUTE(["<b style='color:#83B258'>Execute tool</b>"])
 
     TOOL_USE --> L1
     L1 --> L2
@@ -261,15 +261,15 @@ flowchart TD
     classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
     class POL,MDM,REMOTE,DENY,ASK,ALLOW,MODE,BASH_V,FILE_V,AGENT_V,SANDBOX,PATHS,SECRETS,SHELL,DIALOG nodeDefault
 
-    style L1 fill:#161c26,stroke:#f87171,stroke-width:1.5px
-    style L2 fill:#161c26,stroke:#fb923c,stroke-width:1.5px
-    style L3 fill:#161c26,stroke:#e0b468,stroke-width:1.5px
-    style L4 fill:#161c26,stroke:#a78bfa,stroke-width:1.5px
-    style L5 fill:#161c26,stroke:#22d3ee,stroke-width:1.5px
-    style L6 fill:#161c26,stroke:#4ade80,stroke-width:1.5px
-    style L7 fill:#161c26,stroke:#5b8def,stroke-width:1.5px
-    style TOOL_USE fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
-    style EXECUTE fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+    style L1 fill:#161c26,stroke:#D4634B,stroke-width:1.5px
+    style L2 fill:#161c26,stroke:#E6C34F,stroke-width:1.5px
+    style L3 fill:#161c26,stroke:#E6C34F,stroke-width:1.5px
+    style L4 fill:#161c26,stroke:#8B7EC8,stroke-width:1.5px
+    style L5 fill:#161c26,stroke:#186098,stroke-width:1.5px
+    style L6 fill:#161c26,stroke:#83B258,stroke-width:1.5px
+    style L7 fill:#161c26,stroke:#006AF4,stroke-width:1.5px
+    style TOOL_USE fill:#1f2533,stroke:#D4634B,stroke-width:2px,color:#D4634B
+    style EXECUTE fill:#1f2533,stroke:#83B258,stroke-width:2px,color:#83B258
 
     linkStyle 0,1,2,3,4,5,6,7 stroke:#4a5470,stroke-width:1.5px
       </pre>
@@ -338,67 +338,67 @@ flowchart TD
 flowchart TD
     START(["<b style='color:#f0f3f8'>Tool use requested</b>"]) --> DENY_RULE
 
-    DENY_RULE{{"<b style='color:#f87171'>Deny rule<br/>exists?</b>"}}
-    DENY_RULE -- "<span style='color:#f87171'>YES</span>" --> BLOCKED(["<b style='color:#f87171'>DENIED</b>"])
+    DENY_RULE{{"<b style='color:#D4634B'>Deny rule<br/>exists?</b>"}}
+    DENY_RULE -- "<span style='color:#D4634B'>YES</span>" --> BLOCKED(["<b style='color:#D4634B'>DENIED</b>"])
     DENY_RULE -- "<span style='color:#8e96a8'>NO</span>" --> ASK_RULE
 
-    ASK_RULE{{"<b style='color:#e0b468'>Ask rule<br/>exists?</b>"}}
-    ASK_RULE -- "<span style='color:#e0b468'>YES</span>" --> ASK_RESULT["<b style='color:#e0b468'>Result = ASK</b><br/><span style='color:#8e96a8;font-size:11px'>unless sandbox auto-allows</span>"]
+    ASK_RULE{{"<b style='color:#E6C34F'>Ask rule<br/>exists?</b>"}}
+    ASK_RULE -- "<span style='color:#E6C34F'>YES</span>" --> ASK_RESULT["<b style='color:#E6C34F'>Result = ASK</b><br/><span style='color:#8e96a8;font-size:11px'>unless sandbox auto-allows</span>"]
     ASK_RULE -- "<span style='color:#8e96a8'>NO</span>" --> ALLOW_RULE
 
-    ALLOW_RULE{{"<b style='color:#4ade80'>Allow rule<br/>exists?</b>"}}
-    ALLOW_RULE -- "<span style='color:#4ade80'>YES</span>" --> ALLOWED(["<b style='color:#4ade80'>ALLOWED</b>"])
+    ALLOW_RULE{{"<b style='color:#83B258'>Allow rule<br/>exists?</b>"}}
+    ALLOW_RULE -- "<span style='color:#83B258'>YES</span>" --> ALLOWED(["<b style='color:#83B258'>ALLOWED</b>"])
     ALLOW_RULE -- "<span style='color:#8e96a8'>NO</span>" --> CUSTOM
 
-    CUSTOM["<b style='color:#a78bfa'>tool.checkPermissions()</b><br/><span style='color:#8e96a8;font-size:11px'>Tool-specific validation logic<br/>(Bash security, file staleness, etc.)</span>"]
-    CUSTOM --> CUSTOM_RESULT{{"<b style='color:#a78bfa'>Result?</b>"}}
-    CUSTOM_RESULT -- "<span style='color:#4ade80'>allow</span>" --> ALLOWED
-    CUSTOM_RESULT -- "<span style='color:#f87171'>deny</span>" --> BLOCKED
-    CUSTOM_RESULT -- "<span style='color:#e0b468'>ask</span>" --> MODE_CHECK
+    CUSTOM["<b style='color:#8B7EC8'>tool.checkPermissions()</b><br/><span style='color:#8e96a8;font-size:11px'>Tool-specific validation logic<br/>(Bash security, file staleness, etc.)</span>"]
+    CUSTOM --> CUSTOM_RESULT{{"<b style='color:#8B7EC8'>Result?</b>"}}
+    CUSTOM_RESULT -- "<span style='color:#83B258'>allow</span>" --> ALLOWED
+    CUSTOM_RESULT -- "<span style='color:#D4634B'>deny</span>" --> BLOCKED
+    CUSTOM_RESULT -- "<span style='color:#E6C34F'>ask</span>" --> MODE_CHECK
 
     ASK_RESULT --> MODE_CHECK
 
-    MODE_CHECK{{"<b style='color:#e0b468'>Permission<br/>mode?</b>"}}
-    MODE_CHECK -- "<span style='color:#f87171'>bypassPermissions</span>" --> ALLOWED
-    MODE_CHECK -- "<span style='color:#f87171'>dontAsk</span>" --> BLOCKED
-    MODE_CHECK -- "<span style='color:#fb923c'>auto</span>" --> AUTO_PATH
-    MODE_CHECK -- "<span style='color:#5b8def'>default / acceptEdits / plan</span>" --> USER_PROMPT
+    MODE_CHECK{{"<b style='color:#E6C34F'>Permission<br/>mode?</b>"}}
+    MODE_CHECK -- "<span style='color:#D4634B'>bypassPermissions</span>" --> ALLOWED
+    MODE_CHECK -- "<span style='color:#D4634B'>dontAsk</span>" --> BLOCKED
+    MODE_CHECK -- "<span style='color:#E6C34F'>auto</span>" --> AUTO_PATH
+    MODE_CHECK -- "<span style='color:#006AF4'>default / acceptEdits / plan</span>" --> USER_PROMPT
 
-    subgraph AUTO["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>AUTO MODE PATH</span>"]
+    subgraph AUTO["<span style='color:#E6C34F;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>AUTO MODE PATH</span>"]
         AUTO_PATH["<b style='color:#f0f3f8'>Try fast paths</b>"]
         AUTO_PATH --> FAST1{{"<b style='color:#8e96a8;font-size:11px'>acceptEdits<br/>would allow?</b>"}}
-        FAST1 -- "<span style='color:#4ade80'>YES</span>" --> FAST_ALLOW(["<b style='color:#4ade80'>ALLOWED</b><br/><span style='color:#8e96a8;font-size:10px'>fast path</span>"])
+        FAST1 -- "<span style='color:#83B258'>YES</span>" --> FAST_ALLOW(["<b style='color:#83B258'>ALLOWED</b><br/><span style='color:#8e96a8;font-size:10px'>fast path</span>"])
         FAST1 -- "<span style='color:#8e96a8'>NO</span>" --> FAST2{{"<b style='color:#8e96a8;font-size:11px'>Safe tool<br/>allowlist?</b>"}}
-        FAST2 -- "<span style='color:#4ade80'>YES</span>" --> FAST_ALLOW
+        FAST2 -- "<span style='color:#83B258'>YES</span>" --> FAST_ALLOW
         FAST2 -- "<span style='color:#8e96a8'>NO</span>" --> CLASSIFIER
 
-        CLASSIFIER["<b style='color:#fb923c'>AI Classifier</b><br/><span style='color:#8e96a8;font-size:11px'>Evaluates action against<br/>full conversation transcript</span>"]
-        CLASSIFIER --> CL_RESULT{{"<b style='color:#fb923c;font-size:11px'>Classifier<br/>result?</b>"}}
-        CL_RESULT -- "<span style='color:#4ade80'>safe</span>" --> FAST_ALLOW
-        CL_RESULT -- "<span style='color:#f87171'>block</span>" --> DENIAL_CHECK
+        CLASSIFIER["<b style='color:#E6C34F'>AI Classifier</b><br/><span style='color:#8e96a8;font-size:11px'>Evaluates action against<br/>full conversation transcript</span>"]
+        CLASSIFIER --> CL_RESULT{{"<b style='color:#E6C34F;font-size:11px'>Classifier<br/>result?</b>"}}
+        CL_RESULT -- "<span style='color:#83B258'>safe</span>" --> FAST_ALLOW
+        CL_RESULT -- "<span style='color:#D4634B'>block</span>" --> DENIAL_CHECK
         CL_RESULT -- "<span style='color:#8e96a8'>unavailable</span>" --> USER_PROMPT
 
-        DENIAL_CHECK{{"<b style='color:#f87171;font-size:11px'>Denial<br/>limit hit?</b>"}}
-        DENIAL_CHECK -- "<span style='color:#f87171'>3 consecutive<br/>or 20 total</span>" --> USER_PROMPT
-        DENIAL_CHECK -- "<span style='color:#8e96a8'>NO</span>" --> AUTO_BLOCKED(["<b style='color:#f87171'>DENIED</b>"])
+        DENIAL_CHECK{{"<b style='color:#D4634B;font-size:11px'>Denial<br/>limit hit?</b>"}}
+        DENIAL_CHECK -- "<span style='color:#D4634B'>3 consecutive<br/>or 20 total</span>" --> USER_PROMPT
+        DENIAL_CHECK -- "<span style='color:#8e96a8'>NO</span>" --> AUTO_BLOCKED(["<b style='color:#D4634B'>DENIED</b>"])
     end
 
-    USER_PROMPT["<b style='color:#5b8def'>Show permission dialog</b><br/><span style='color:#8e96a8;font-size:11px'>User approves, denies,<br/>or sets always-allow rule</span>"]
+    USER_PROMPT["<b style='color:#006AF4'>Show permission dialog</b><br/><span style='color:#8e96a8;font-size:11px'>User approves, denies,<br/>or sets always-allow rule</span>"]
 
     classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
     class DENY_RULE,ASK_RULE,ALLOW_RULE,CUSTOM,CUSTOM_RESULT,ASK_RESULT,MODE_CHECK nodeDefault
     class AUTO_PATH,FAST1,FAST2,CLASSIFIER,CL_RESULT,DENIAL_CHECK nodeDefault
 
     style START fill:#1f2533,stroke:#f0f3f8,stroke-width:2px,color:#f0f3f8
-    style BLOCKED fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
-    style AUTO_BLOCKED fill:#1f2533,stroke:#f87171,stroke-width:2px,color:#f87171
-    style ALLOWED fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
-    style FAST_ALLOW fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
-    style USER_PROMPT fill:#1f2533,stroke:#5b8def,stroke-width:2px
-    style AUTO fill:#161c26,stroke:#fb923c,stroke-width:1.5px
+    style BLOCKED fill:#1f2533,stroke:#D4634B,stroke-width:2px,color:#D4634B
+    style AUTO_BLOCKED fill:#1f2533,stroke:#D4634B,stroke-width:2px,color:#D4634B
+    style ALLOWED fill:#1f2533,stroke:#83B258,stroke-width:2px,color:#83B258
+    style FAST_ALLOW fill:#1f2533,stroke:#83B258,stroke-width:2px,color:#83B258
+    style USER_PROMPT fill:#1f2533,stroke:#006AF4,stroke-width:2px
+    style AUTO fill:#161c26,stroke:#E6C34F,stroke-width:1.5px
 
     linkStyle 0 stroke:#f0f3f8,stroke-width:1.5px
-    linkStyle 1 stroke:#f87171,stroke-width:1.5px
+    linkStyle 1 stroke:#D4634B,stroke-width:1.5px
       </pre>
     </div>
   </div>
@@ -465,28 +465,28 @@ flowchart TD
 
     CMD --> PARSE["<b style='color:#f0f3f8'>Command Parsing</b><br/><span style='color:#8e96a8;font-size:11px'>Strip safe wrappers (nohup, timeout, env vars)<br/>Extract base command + arguments</span>"]
 
-    PARSE --> SEC["<b style='color:#f87171'>bashSecurity.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Injection detection · Symlink escapes<br/>Dangerous pattern matching (2,600 lines)</span>"]
+    PARSE --> SEC["<b style='color:#D4634B'>bashSecurity.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Injection detection · Symlink escapes<br/>Dangerous pattern matching (2,600 lines)</span>"]
 
-    SEC --> PATH_V["<b style='color:#fb923c'>pathValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Protected paths: /, ~, /usr, C:\\<br/>Shell expansion blocking: $VAR, $(cmd)<br/>UNC path NTLM protection (1,300 lines)</span>"]
+    SEC --> PATH_V["<b style='color:#E6C34F'>pathValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Protected paths: /, ~, /usr, C:\\<br/>Shell expansion blocking: $VAR, $(cmd)<br/>UNC path NTLM protection (1,300 lines)</span>"]
 
-    PATH_V --> RO["<b style='color:#a78bfa'>readOnlyValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Dangerous tput capabilities blocked<br/>ss/fd command restrictions<br/>tput -S defense-in-depth (2,000 lines)</span>"]
+    PATH_V --> RO["<b style='color:#8B7EC8'>readOnlyValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Dangerous tput capabilities blocked<br/>ss/fd command restrictions<br/>tput -S defense-in-depth (2,000 lines)</span>"]
 
-    RO --> DESTR["<b style='color:#e0b468'>destructiveCommandWarning.ts</b><br/><span style='color:#8e96a8;font-size:11px'>git reset --hard · git push --force<br/>rm -rf · DROP TABLE · terraform destroy</span>"]
+    RO --> DESTR["<b style='color:#E6C34F'>destructiveCommandWarning.ts</b><br/><span style='color:#8e96a8;font-size:11px'>git reset --hard · git push --force<br/>rm -rf · DROP TABLE · terraform destroy</span>"]
 
-    DESTR --> PERM["<b style='color:#5b8def'>bashPermissions.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Rule matching with wildcard/prefix/exact<br/>Binary hijack var detection (2,600 lines)</span>"]
+    DESTR --> PERM["<b style='color:#006AF4'>bashPermissions.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Rule matching with wildcard/prefix/exact<br/>Binary hijack var detection (2,600 lines)</span>"]
 
-    PERM --> SED["<b style='color:#22d3ee'>sedValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Allowlist-based sed command validation<br/>Blocks writes to dangerous files (680 lines)</span>"]
+    PERM --> SED["<b style='color:#186098'>sedValidation.ts</b><br/><span style='color:#8e96a8;font-size:11px'>Allowlist-based sed command validation<br/>Blocks writes to dangerous files (680 lines)</span>"]
 
     SED --> SANDBOX_CHK{{"<b style='color:#8e96a8;font-size:11px'>Sandbox<br/>enabled?</b>"}}
-    SANDBOX_CHK -- "<span style='color:#4ade80'>YES</span>" --> SANDBOX_EXEC["<b style='color:#22d3ee'>Sandboxed execution</b><br/><span style='color:#8e96a8;font-size:11px'>FS restrictions · Network allowlist</span>"]
+    SANDBOX_CHK -- "<span style='color:#83B258'>YES</span>" --> SANDBOX_EXEC["<b style='color:#186098'>Sandboxed execution</b><br/><span style='color:#8e96a8;font-size:11px'>FS restrictions · Network allowlist</span>"]
     SANDBOX_CHK -- "<span style='color:#8e96a8'>NO</span>" --> EXEC
 
-    SANDBOX_EXEC --> EXEC(["<b style='color:#4ade80'>Execute</b>"])
+    SANDBOX_EXEC --> EXEC(["<b style='color:#83B258'>Execute</b>"])
 
     classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
     class PARSE,SEC,PATH_V,RO,DESTR,PERM,SED,SANDBOX_CHK,SANDBOX_EXEC nodeDefault
     style CMD fill:#1f2533,stroke:#f0f3f8,stroke-width:2px,color:#f0f3f8
-    style EXEC fill:#1f2533,stroke:#4ade80,stroke-width:2px,color:#4ade80
+    style EXEC fill:#1f2533,stroke:#83B258,stroke-width:2px,color:#83B258
       </pre>
     </div>
   </div>
@@ -638,22 +638,22 @@ flowchart TD
       <pre class="mermaid">
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1f2533', 'primaryTextColor': '#dce1ea', 'primaryBorderColor': '#4a5470', 'lineColor': '#4a5470', 'secondaryColor': '#1a1f2a', 'tertiaryColor': '#141820', 'background': '#141820', 'mainBkg': '#1f2533', 'nodeBorder': '#4a5470', 'clusterBkg': '#161c26', 'clusterBorder': '#4a5470', 'titleColor': '#dce1ea', 'edgeLabelBackground': '#1a1f2a', 'fontSize': '13px'}, 'flowchart': {'useMaxWidth': false, 'htmlLabels': true, 'curve': 'basis'}}}%%
 flowchart TD
-    subgraph REMOTE_S["<span style='color:#f87171;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>REMOTE MANAGED SETTINGS (HIGHEST)</span>"]
+    subgraph REMOTE_S["<span style='color:#D4634B;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>REMOTE MANAGED SETTINGS (HIGHEST)</span>"]
         RM["<b style='color:#f0f3f8'>Server-Pushed Config</b><br/><span style='color:#8e96a8;font-size:11px'>Fetched from Anthropic API<br/>ETag caching · 60-min polling<br/>Team + Enterprise subscribers</span>"]
     end
 
-    subgraph MDM_S["<span style='color:#fb923c;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>MDM / DEVICE MANAGEMENT</span>"]
+    subgraph MDM_S["<span style='color:#E6C34F;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>MDM / DEVICE MANAGEMENT</span>"]
         direction LR
         MAC["<b style='color:#f0f3f8'>macOS</b><br/><span style='color:#8e96a8;font-size:11px'>/Library/Managed Preferences/<br/>com.anthropic.claudecode.plist</span>"]
         WIN["<b style='color:#f0f3f8'>Windows</b><br/><span style='color:#8e96a8;font-size:11px'>HKLM\\SOFTWARE\\Policies\\<br/>ClaudeCode</span>"]
         LIN["<b style='color:#f0f3f8'>Linux</b><br/><span style='color:#8e96a8;font-size:11px'>/etc/claude-code/<br/>managed-settings.json</span>"]
     end
 
-    subgraph POLICY_S["<span style='color:#e0b468;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>POLICY LIMITS API</span>"]
+    subgraph POLICY_S["<span style='color:#E6C34F;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>POLICY LIMITS API</span>"]
         PL["<b style='color:#f0f3f8'>Organization Restrictions</b><br/><span style='color:#8e96a8;font-size:11px'>Fetched from /api/claude_code/policy_limits<br/>SHA256 checksum · 5 retries · 0o600 cache file<br/>Fails open (except feedback in essential-traffic mode)</span>"]
     end
 
-    subgraph USER_S["<span style='color:#5b8def;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>USER SETTINGS (LOWEST)</span>"]
+    subgraph USER_S["<span style='color:#006AF4;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:0.1em'>USER SETTINGS (LOWEST)</span>"]
         US["<b style='color:#f0f3f8'>~/.claude/settings.json</b><br/><span style='color:#8e96a8;font-size:11px'>Personal preferences · tool rules<br/>Overridden by everything above</span>"]
     end
 
@@ -661,10 +661,10 @@ flowchart TD
 
     classDef nodeDefault fill:#1f2533,stroke:#4a5470,stroke-width:1.5px,color:#dce1ea
     class RM,MAC,WIN,LIN,PL,US nodeDefault
-    style REMOTE_S fill:#161c26,stroke:#f87171,stroke-width:1.5px
-    style MDM_S fill:#161c26,stroke:#fb923c,stroke-width:1.5px
-    style POLICY_S fill:#161c26,stroke:#e0b468,stroke-width:1.5px
-    style USER_S fill:#161c26,stroke:#5b8def,stroke-width:1.5px
+    style REMOTE_S fill:#161c26,stroke:#D4634B,stroke-width:1.5px
+    style MDM_S fill:#161c26,stroke:#E6C34F,stroke-width:1.5px
+    style POLICY_S fill:#161c26,stroke:#E6C34F,stroke-width:1.5px
+    style USER_S fill:#161c26,stroke:#006AF4,stroke-width:1.5px
       </pre>
     </div>
   </div>
